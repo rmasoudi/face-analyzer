@@ -1,0 +1,14 @@
+*.sln
+*.csproj
+**/bin/Debug/**
+**/obj/Debug/**
+**/image/**
+**.dll
+packages/**
+**.jpg
+**.jpeg
+**eye.xml
+lbfmodel.yaml
+**face.xml
+**.suo
+**.png
