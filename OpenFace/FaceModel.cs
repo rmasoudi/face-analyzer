@@ -30,6 +30,7 @@ namespace OpenFace
         Point rightEyeAnglePoint;
         public FaceModel(PointF[] points, Rectangle faceRect)
         {
+            FaceBox = faceRect;
             MouthPoints = GetMouthPoints(points);
             MouthBox = getBoundingBox(MouthPoints);
             NosePoints = GetNosePoints(points);

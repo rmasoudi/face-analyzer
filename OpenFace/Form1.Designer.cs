@@ -34,17 +34,15 @@
             this.metroTile3 = new MetroFramework.Controls.MetroTile();
             this.metroTile4 = new MetroFramework.Controls.MetroTile();
             this.metroTile5 = new MetroFramework.Controls.MetroTile();
-            this.metroTile6 = new MetroFramework.Controls.MetroTile();
             this.colorPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.colorPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.colorBox1 = new System.Windows.Forms.GroupBox();
-            this.colorBox2 = new System.Windows.Forms.GroupBox();
             this.mainPicture = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.effectBar = new MetroFramework.Controls.MetroTrackBar();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.colorBox1.SuspendLayout();
-            this.colorBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -56,7 +54,6 @@
             this.flowLayoutPanel1.Controls.Add(this.metroTile3);
             this.flowLayoutPanel1.Controls.Add(this.metroTile4);
             this.flowLayoutPanel1.Controls.Add(this.metroTile5);
-            this.flowLayoutPanel1.Controls.Add(this.metroTile6);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(127, 369);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -173,28 +170,6 @@
             this.metroTile5.MouseLeave += new System.EventHandler(this.metroTile5_MouseLeave);
             this.metroTile5.MouseHover += new System.EventHandler(this.metroTile5_MouseHover);
             // 
-            // metroTile6
-            // 
-            this.metroTile6.ActiveControl = null;
-            this.metroTile6.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.metroTile6.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.metroTile6.Location = new System.Drawing.Point(145, 4);
-            this.metroTile6.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.metroTile6.Name = "metroTile6";
-            this.metroTile6.Size = new System.Drawing.Size(45, 40);
-            this.metroTile6.TabIndex = 7;
-            this.metroTile6.TileImage = global::OpenFace.Properties.Resources.female_hair_shape_and_face_silhouette;
-            this.metroTile6.TileImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.metroTile6.TileTextFontSize = MetroFramework.MetroTileTextSize.Small;
-            this.metroTile6.TileTextFontWeight = MetroFramework.MetroTileTextWeight.Regular;
-            this.metroTile6.UseCustomBackColor = true;
-            this.metroTile6.UseMnemonic = false;
-            this.metroTile6.UseSelectable = true;
-            this.metroTile6.UseTileImage = true;
-            this.metroTile6.Click += new System.EventHandler(this.metroTile6_Click);
-            this.metroTile6.MouseLeave += new System.EventHandler(this.metroTile6_MouseLeave);
-            this.metroTile6.MouseHover += new System.EventHandler(this.metroTile6_MouseHover);
-            // 
             // colorPanel
             // 
             this.colorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -203,15 +178,6 @@
             this.colorPanel.Name = "colorPanel";
             this.colorPanel.Size = new System.Drawing.Size(439, 23);
             this.colorPanel.TabIndex = 3;
-            // 
-            // colorPanel2
-            // 
-            this.colorPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.colorPanel2.Location = new System.Drawing.Point(3, 20);
-            this.colorPanel2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.colorPanel2.Name = "colorPanel2";
-            this.colorPanel2.Size = new System.Drawing.Size(436, 21);
-            this.colorPanel2.TabIndex = 4;
             // 
             // colorBox1
             // 
@@ -223,31 +189,21 @@
             this.colorBox1.TabStop = false;
             this.colorBox1.Visible = false;
             // 
-            // colorBox2
-            // 
-            this.colorBox2.Controls.Add(this.colorPanel2);
-            this.colorBox2.Location = new System.Drawing.Point(127, 476);
-            this.colorBox2.Name = "colorBox2";
-            this.colorBox2.Size = new System.Drawing.Size(442, 44);
-            this.colorBox2.TabIndex = 9;
-            this.colorBox2.TabStop = false;
-            this.colorBox2.Visible = false;
-            // 
             // mainPicture
             // 
-            this.mainPicture.Location = new System.Drawing.Point(368, 153);
+            this.mainPicture.Location = new System.Drawing.Point(368, 36);
             this.mainPicture.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.mainPicture.Name = "mainPicture";
-            this.mainPicture.Size = new System.Drawing.Size(153, 157);
+            this.mainPicture.Size = new System.Drawing.Size(295, 274);
             this.mainPicture.TabIndex = 0;
             this.mainPicture.TabStop = false;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(127, 153);
+            this.pictureBox1.Location = new System.Drawing.Point(10, 36);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(162, 157);
+            this.pictureBox1.Size = new System.Drawing.Size(307, 274);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -262,13 +218,34 @@
             this.effectBar.Visible = false;
             this.effectBar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.effectBar_MouseUp);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(23, 479);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "ذخیره مدل";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(23, 508);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 12;
+            this.button2.Text = "بازیابی مدل";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(702, 582);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.effectBar);
-            this.Controls.Add(this.colorBox2);
             this.Controls.Add(this.mainPicture);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -281,7 +258,6 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.colorBox1.ResumeLayout(false);
-            this.colorBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainPicture)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -297,12 +273,11 @@
         private MetroFramework.Controls.MetroTile metroTile3;
         private MetroFramework.Controls.MetroTile metroTile4;
         private MetroFramework.Controls.MetroTile metroTile5;
-        private MetroFramework.Controls.MetroTile metroTile6;
         private System.Windows.Forms.FlowLayoutPanel colorPanel;
-        private System.Windows.Forms.FlowLayoutPanel colorPanel2;
         private System.Windows.Forms.GroupBox colorBox1;
-        private System.Windows.Forms.GroupBox colorBox2;
         private MetroFramework.Controls.MetroTrackBar effectBar;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }
 

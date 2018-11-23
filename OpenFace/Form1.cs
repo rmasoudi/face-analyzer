@@ -6,6 +6,7 @@ using Emgu.CV.Util;
 using MetroFramework.Controls;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Transitions;
 
@@ -14,8 +15,9 @@ namespace OpenFace
     public partial class Form1 : MetroFramework.Forms.MetroForm
     {
         private static int lastTimeSnapshot = DateTime.UtcNow.Millisecond;
-        private const String FACE_DETECTOR_PATH = @"C:\Users\User\Documents\Visual Studio 2015\Projects\OpenFace\lbpcascade_frontalface.xml";
-        private const String LANDMARK_DETECTOR_PATH = @"C:\Users\User\Documents\Visual Studio 2015\Projects\OpenFace\lbfmodel.yaml";
+        private const String FACE_DETECTOR_PATH = @"D:\FaceMK\OpenFace\lbpcascade_frontalface.xml";
+        private const String LANDMARK_DETECTOR_PATH = @"D:\FaceMK\OpenFace\lbfmodel.yaml";
+        private const String PERSIST_PATH = @"E:\models\";
         private static CascadeClassifier faceDetector;
         private static FacemarkLBF facemark;
         private MKParams mkParams = new MKParams();
@@ -40,7 +42,7 @@ namespace OpenFace
         {
             InitializeComponent();
             InitModel();
-            image = new Image<Bgr, byte>(@"C:\Users\User\Documents\Visual Studio 2015\Projects\OpenFace\OpenFace\images\2.jpg");
+            image = new Image<Bgr, byte>(@"E:\Pic\2.jpg");
             image = image.Resize(pictureBox1.Width, pictureBox1.Height, Inter.Linear, true);
             mainColorImage = image.Clone();
             grayImage = image.Convert<Gray, byte>();
@@ -134,21 +136,21 @@ namespace OpenFace
             Image<Gray, byte> skinMask = image.InRange(new Bgr(minValues[0], minValues[1], minValues[2]), new Bgr(avg0, avg1, avg2));
 
 
-            image.ROI = new Rectangle(hairBox.X + hairBox.Width / 2, hairBox.Y + hairBox.Height / 4, hairBox.Width / 2, hairBox.Height / 2);
-            image.MinMax(out minValues, out maxValues, out minLocs, out maxLocs);
-            image.ROI = Rectangle.Empty;
-            avg0 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
-            avg1 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
-            avg2 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
-            Image<Gray, byte> hairMask = image.InRange(new Bgr(minValues[0], minValues[1], minValues[2]), new Bgr(avg0, avg1, avg2));
+            //image.ROI = new Rectangle(hairBox.X + hairBox.Width / 2, hairBox.Y + hairBox.Height / 4, hairBox.Width / 2, hairBox.Height / 2);
+            //image.MinMax(out minValues, out maxValues, out minLocs, out maxLocs);
+            //image.ROI = Rectangle.Empty;
+            //avg0 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
+            //avg1 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
+            //avg2 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
+            //Image<Gray, byte> hairMask = image.InRange(new Bgr(minValues[0], minValues[1], minValues[2]), new Bgr(avg0, avg1, avg2));
 
             //ImageViewer viewer = new ImageViewer();
             //viewer.Image = hairMask;
             //viewer.ShowDialog();
 
-            for (int i = image.Height - 1; i >= 0; i--)
+            for (int i = faceModel.FaceBox.Bottom - 1; i >= faceModel.FaceBox.Top; i--)
             {
-                for (int j = image.Width - 1; j >= 0; j--)
+                for (int j = faceModel.FaceBox.Right - 1; j >= faceModel.FaceBox.Left; j--)
                 {
                     Color oldColor = image.Bitmap.GetPixel(j, i);
                     int oldRed = oldColor.R;
@@ -169,19 +171,19 @@ namespace OpenFace
                         Color newColor = Color.FromArgb(newRed, newGreen, newBlue);
                         image.Bitmap.SetPixel(j, i, newColor);
                     }
-                    else if (!isInBoxArray(i, j, faceModel.LandmarkRects) && skinMask[i, j].MCvScalar.V0 != 0 && hairMask[i, j].MCvScalar.V0 == 255 && mkParams.HairEnabled)
-                    {
-                        Color maskColor = mkParams.HairMaskColor;
-                        int maskRed = maskColor.R;
-                        int maskGreen = maskColor.G;
-                        int maskBlue = maskColor.B;
+                    //else if (!isInBoxArray(i, j, faceModel.LandmarkRects) && skinMask[i, j].MCvScalar.V0 != 0 && hairMask[i, j].MCvScalar.V0 == 255 && mkParams.HairEnabled)
+                    //{
+                    //    Color maskColor = mkParams.HairMaskColor;
+                    //    int maskRed = maskColor.R;
+                    //    int maskGreen = maskColor.G;
+                    //    int maskBlue = maskColor.B;
 
-                        int newRed = (int)(mkParams.HairAlpha * maskRed + (1 - mkParams.HairAlpha) * oldRed);
-                        int newGreen = (int)(mkParams.HairAlpha * maskGreen + (1 - mkParams.HairAlpha) * oldGreen);
-                        int newBlue = (int)(mkParams.HairAlpha * maskBlue + (1 - mkParams.HairAlpha) * oldBlue);
-                        Color newColor = Color.FromArgb(newRed, newGreen, newBlue);
-                        image.Bitmap.SetPixel(j, i, newColor);
-                    }
+                    //    int newRed = (int)(mkParams.HairAlpha * maskRed + (1 - mkParams.HairAlpha) * oldRed);
+                    //    int newGreen = (int)(mkParams.HairAlpha * maskGreen + (1 - mkParams.HairAlpha) * oldGreen);
+                    //    int newBlue = (int)(mkParams.HairAlpha * maskBlue + (1 - mkParams.HairAlpha) * oldBlue);
+                    //    Color newColor = Color.FromArgb(newRed, newGreen, newBlue);
+                    //    image.Bitmap.SetPixel(j, i, newColor);
+                    //}
 
                 }
             }
@@ -541,12 +543,12 @@ namespace OpenFace
         private void metroTile1_Click(object sender, EventArgs e)
         {
             colorBox1.Text = "رژ لب";
-            colorBox2.Text = "خط لب";
+            //colorBox2.Text = "خط لب";
             colorBox1.Visible = true;
             effectBar.Visible = true;
-            colorBox2.Visible = true;
+            //colorBox2.Visible = true;
             loadColors(LIP_STICK_COMMAND, colorPanel);
-            loadColors(LIP_LINE_COMMAND, colorPanel2);
+            //loadColors(LIP_LINE_COMMAND, colorPanel2);
             currentCommand = LIP_STICK_COMMAND;
         }
 
@@ -555,7 +557,7 @@ namespace OpenFace
             colorBox1.Text = "لنز چشم";
             colorBox1.Visible = true;
             effectBar.Visible = true;
-            colorBox2.Visible = false;
+            //colorBox2.Visible = false;
             loadColors(EYE_COMMAND, colorPanel);
             currentCommand = EYE_COMMAND;
         }
@@ -565,7 +567,7 @@ namespace OpenFace
             colorBox1.Text = "مداد ابرو";
             colorBox1.Visible = true;
             effectBar.Visible = true;
-            colorBox2.Visible = false;
+            //colorBox2.Visible = false;
             loadColors(EYEBROW_COMMAND, colorPanel);
             currentCommand = EYEBROW_COMMAND;
         }
@@ -575,17 +577,18 @@ namespace OpenFace
             colorBox1.Text = "خط چشم";
             colorBox1.Visible = true;
             effectBar.Visible = true;
-            colorBox2.Visible = false;
+            //colorBox2.Visible = false;
             loadColors(EYE_LINE_COMMAND, colorPanel);
             currentCommand = EYE_LINE_COMMAND;
         }
 
         private void metroTile5_Click(object sender, EventArgs e)
         {
+            mkParams.SkinEnabled = true;
             colorBox1.Text = "رنگ پوست";
             colorBox1.Visible = true;
             effectBar.Visible = true;
-            colorBox2.Visible = false;
+            //colorBox2.Visible = false;
             loadColors(SKIN_COMMAND, colorPanel);
             currentCommand = SKIN_COMMAND;
         }
@@ -595,7 +598,7 @@ namespace OpenFace
             colorBox1.Text = "رنگ مو";
             colorBox1.Visible = true;
             effectBar.Visible = true;
-            colorBox2.Visible = false;
+            //colorBox2.Visible = false;
             loadColors(HAIR_COMMAND, colorPanel);
             currentCommand = HAIR_COMMAND;
         }
@@ -644,6 +647,20 @@ namespace OpenFace
         private double GetValueInRange(double max, int value)
         {
             return (value / 100.0) * max;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int fileId = Directory.GetFiles(PERSIST_PATH, "*", SearchOption.TopDirectoryOnly).Length;
+            File.WriteAllText(PERSIST_PATH + fileId+".json", Newtonsoft.Json.JsonConvert.SerializeObject(mkParams));
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            int fileId = Directory.GetFiles(PERSIST_PATH, "*", SearchOption.TopDirectoryOnly).Length;
+            string contents = File.ReadAllText(PERSIST_PATH + (fileId - 1) + ".json");
+            mkParams= Newtonsoft.Json.JsonConvert.DeserializeObject<MKParams>(contents);
+            Remakup();
         }
     }
 }
