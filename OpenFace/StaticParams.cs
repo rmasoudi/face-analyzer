@@ -4,7 +4,7 @@ namespace OpenFace
 {
     public class StaticParams
     {
-        public static Color[] LipColors = new[] { Color.FromArgb(50, 201, 32, 201), Color.FromArgb(50, 201, 32, 147), Color.FromArgb(50, 163, 14, 69), Color.FromArgb(50, 163, 14, 59) };
+        public static Color[] LipColors = new[] { Color.FromArgb( 201, 32, 201), Color.FromArgb( 201, 32, 147), Color.FromArgb(163, 14, 69), Color.FromArgb(163, 14, 59) };
         public static Color[] LipLineColors = new[] { Color.FromArgb(201, 32, 201), Color.FromArgb(201, 32, 147), Color.FromArgb(163, 14, 59) };
         public static Color[] EyeColors = new[] { Color.FromArgb(39, 111, 191), Color.FromArgb(119, 29, 9), Color.FromArgb(56, 12, 2), Color.FromArgb(20, 3, 0), Color.FromArgb(99, 48, 3) };
         public static Color[] EyeBrowColors = new[] { Color.FromArgb(130, 43, 14), Color.FromArgb(94, 26, 3), Color.FromArgb(94, 3, 3), Color.FromArgb(191, 34, 34), Color.FromArgb(196, 118, 1), Color.FromArgb(3, 68, 38) };
@@ -16,7 +16,7 @@ namespace OpenFace
         public static double MaxEyeAlpha = 90;
         public static double MaxEyebrowAlpha = .5;
         public static double MaxEyelineAlpha = 100;
-        public static double MaxSkinAlpha = .9;
+        public static double MaxSkinAlpha = .5;
         public static double MaxHairAlpha = .5;
     }
 }
