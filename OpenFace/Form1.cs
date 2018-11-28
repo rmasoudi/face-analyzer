@@ -8,16 +8,12 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Transitions;
 
 namespace OpenFace
 {
     public partial class Form1 : MetroFramework.Forms.MetroForm
     {
         private static int lastTimeSnapshot = DateTime.UtcNow.Millisecond;
-        private const String FACE_DETECTOR_PATH = @"D:\FaceMK\OpenFace\lbpcascade_frontalface.xml";
-        private const String LANDMARK_DETECTOR_PATH = @"D:\FaceMK\OpenFace\lbfmodel.yaml";
-        private const String PERSIST_PATH = @"E:\models\";
         private static CascadeClassifier faceDetector;
         private static FacemarkLBF facemark;
         private MKParams mkParams = new MKParams();
@@ -42,7 +38,7 @@ namespace OpenFace
         {
             InitializeComponent();
             InitModel();
-            image = new Image<Bgr, byte>(@"E:\Pic\2.jpg");
+            image = new Image<Bgr, byte>(@"C:\Users\User\Documents\Visual Studio 2015\Projects\OpenFace\OpenFace\images\2.jpg");
             image = image.Resize(pictureBox1.Width, pictureBox1.Height, Inter.Linear, true);
             mainColorImage = image.Clone();
             grayImage = image.Convert<Gray, byte>();
@@ -58,9 +54,9 @@ namespace OpenFace
 
         private void InitModel()
         {
-            faceDetector = new CascadeClassifier(FACE_DETECTOR_PATH);
+            faceDetector = new CascadeClassifier(Constants.FACE_DETECTOR_PATH);
             FacemarkLBFParams fParams = new FacemarkLBFParams();
-            fParams.ModelFile = LANDMARK_DETECTOR_PATH;
+            fParams.ModelFile = Constants.LANDMARK_DETECTOR_PATH;
             fParams.NLandmarks = 68; // number of landmark points
             fParams.InitShapeN = 10; // number of multiplier for make data augmentation
             fParams.StagesN = 5; // amount of refinement stages
@@ -472,17 +468,17 @@ namespace OpenFace
 
         private void mouseIn(object sender)
         {
-            MetroTile mt = (MetroTile)sender;
-            Transition t = new Transition(new TransitionType_Linear(10));
-            t.add(mt, "BackColor", Color.LightSlateGray);
-            t.run();
+            //MetroTile mt = (MetroTile)sender;
+            //Transition t = new Transition(new TransitionType_Linear(10));
+            //t.add(mt, "BackColor", Color.LightSlateGray);
+            //t.run();
         }
         private void mouseOut(object sender)
         {
-            MetroTile mt = (MetroTile)sender;
-            Transition t = new Transition(new TransitionType_Linear(1000));
-            t.add(mt, "BackColor", Color.DeepSkyBlue);
-            t.run();
+            //MetroTile mt = (MetroTile)sender;
+            //Transition t = new Transition(new TransitionType_Linear(1000));
+            //t.add(mt, "BackColor", Color.DeepSkyBlue);
+            //t.run();
         }
 
         private void metroTile2_MouseHover(object sender, EventArgs e)
@@ -651,14 +647,14 @@ namespace OpenFace
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int fileId = Directory.GetFiles(PERSIST_PATH, "*", SearchOption.TopDirectoryOnly).Length;
-            File.WriteAllText(PERSIST_PATH + fileId+".json", Newtonsoft.Json.JsonConvert.SerializeObject(mkParams));
+            int fileId = Directory.GetFiles(Constants.PERSIST_PATH, "*", SearchOption.TopDirectoryOnly).Length;
+            File.WriteAllText(Constants.PERSIST_PATH + fileId+".json", Newtonsoft.Json.JsonConvert.SerializeObject(mkParams));
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int fileId = Directory.GetFiles(PERSIST_PATH, "*", SearchOption.TopDirectoryOnly).Length;
-            string contents = File.ReadAllText(PERSIST_PATH + (fileId - 1) + ".json");
+            int fileId = Directory.GetFiles(Constants.PERSIST_PATH, "*", SearchOption.TopDirectoryOnly).Length;
+            string contents = File.ReadAllText(Constants.PERSIST_PATH + (fileId - 1) + ".json");
             mkParams= Newtonsoft.Json.JsonConvert.DeserializeObject<MKParams>(contents);
             Remakup();
         }

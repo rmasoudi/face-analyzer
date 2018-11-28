@@ -12,3 +12,5 @@ lbfmodel.yaml
 **face.xml
 **.suo
 **.png
+**/packages.config
+**.lib
