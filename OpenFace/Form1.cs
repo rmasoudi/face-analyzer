@@ -38,7 +38,7 @@ namespace OpenFace
         {
             InitializeComponent();
             InitModel();
-            image = new Image<Bgr, byte>(@"C:\Users\User\Documents\Visual Studio 2015\Projects\OpenFace\OpenFace\images\2.jpg");
+            image = new Image<Bgr, byte>(Constants.IMAGE_PATH);
             image = image.Resize(pictureBox1.Width, pictureBox1.Height, Inter.Linear, true);
             mainColorImage = image.Clone();
             grayImage = image.Convert<Gray, byte>();
