@@ -22,12 +22,17 @@ namespace OpenFace
         Point[] topLipPoints;
         Point[] lipLineTop;
         Point[] lipLineBottom;
+        Point[] lipBoundry;
+        Point[] noseBottom;
+        Point[] faceBoundry;
         Rectangle faceBox;
         double leftEyeSlope;
         double rightEyeSlope;
         Point leftEyeAnglePoint;
         Point leftEyeTopPoint;
         Point rightEyeAnglePoint;
+        FourPoint skinArea;
+
         public FaceModel(PointF[] points, Rectangle faceRect)
         {
             FaceBox = faceRect;
@@ -58,6 +63,10 @@ namespace OpenFace
             LeftEyeAnglePoint = new Point((int)points[36].X, (int)points[36].Y);
             LeftEyeTopPoint = new Point((int)points[37].X, (int)points[37].Y);
             RightEyeAnglePoint = new Point((int)points[45].X, (int)points[45].Y);
+            SkinArea = ComputeSkinArea(points);
+            LipBoundry = ComputeLipBoundry(points);
+            NoseBottom = ComputeNoseBottom(points);
+            FaceBoundry = ComputeFaceBoundry(points);
         }
 
         public Point[] MouthPoints
@@ -372,6 +381,58 @@ namespace OpenFace
             }
         }
 
+        public FourPoint SkinArea
+        {
+            get
+            {
+                return skinArea;
+            }
+
+            set
+            {
+                skinArea = value;
+            }
+        }
+
+        public Point[] LipBoundry
+        {
+            get
+            {
+                return lipBoundry;
+            }
+
+            set
+            {
+                lipBoundry = value;
+            }
+        }
+
+        public Point[] NoseBottom
+        {
+            get
+            {
+                return noseBottom;
+            }
+
+            set
+            {
+                noseBottom = value;
+            }
+        }
+
+        public Point[] FaceBoundry
+        {
+            get
+            {
+                return faceBoundry;
+            }
+
+            set
+            {
+                faceBoundry = value;
+            }
+        }
+
         private Point[] GetLeftEyebrowPoints(PointF[] points)
         {
             Point[] topLipPoints = new Point[5];
@@ -425,8 +486,59 @@ namespace OpenFace
             topLipPoints[6] = new Point((int)points[54].X, (int)points[54].Y);
             return topLipPoints;
         }
+        private Point[] ComputeLipBoundry(PointF[] points)
+        {
 
+            Point[] topLipPoints = new Point[12];
+            topLipPoints[0] = new Point((int)points[48].X, (int)points[48].Y);
+            topLipPoints[1] = new Point((int)points[49].X, (int)points[49].Y);
+            topLipPoints[2] = new Point((int)points[50].X, (int)points[50].Y);
+            topLipPoints[3] = new Point((int)points[51].X, (int)points[51].Y);
+            topLipPoints[4] = new Point((int)points[52].X, (int)points[52].Y);
+            topLipPoints[5] = new Point((int)points[53].X, (int)points[53].Y);
+            topLipPoints[6] = new Point((int)points[54].X, (int)points[54].Y);
+            topLipPoints[7] = new Point((int)points[55].X, (int)points[55].Y);
+            topLipPoints[8] = new Point((int)points[56].X, (int)points[56].Y);
+            topLipPoints[9] = new Point((int)points[57].X, (int)points[57].Y);
+            topLipPoints[10] = new Point((int)points[58].X, (int)points[58].Y);
+            topLipPoints[11] = new Point((int)points[59].X, (int)points[59].Y);
+            return topLipPoints;
+        }
 
+        private Point[] ComputeNoseBottom(PointF[] points)
+        {
+
+            Point[] topLipPoints = new Point[5];
+            topLipPoints[0] = new Point((int)points[31].X, (int)points[31].Y);
+            topLipPoints[1] = new Point((int)points[32].X, (int)points[32].Y);
+            topLipPoints[2] = new Point((int)points[33].X, (int)points[33].Y);
+            topLipPoints[3] = new Point((int)points[34].X, (int)points[34].Y);
+            topLipPoints[4] = new Point((int)points[35].X, (int)points[35].Y);
+            return topLipPoints;
+        }
+        private Point[] ComputeFaceBoundry(PointF[] points)
+        {
+
+            Point[] topLipPoints = new Point[17];
+            topLipPoints[0] = new Point((int)points[0].X, (int)points[0].Y);
+            topLipPoints[1] = new Point((int)points[1].X, (int)points[1].Y);
+            topLipPoints[2] = new Point((int)points[2].X, (int)points[2].Y);
+            topLipPoints[3] = new Point((int)points[3].X, (int)points[3].Y);
+            topLipPoints[4] = new Point((int)points[4].X, (int)points[4].Y);
+            topLipPoints[5] = new Point((int)points[5].X, (int)points[5].Y);
+            topLipPoints[6] = new Point((int)points[6].X, (int)points[6].Y);
+            topLipPoints[7] = new Point((int)points[7].X, (int)points[7].Y);
+            topLipPoints[8] = new Point((int)points[8].X, (int)points[8].Y);
+            topLipPoints[9] = new Point((int)points[9].X, (int)points[9].Y);
+            topLipPoints[10] = new Point((int)points[10].X, (int)points[10].Y);
+            topLipPoints[11] = new Point((int)points[11].X, (int)points[11].Y);
+            topLipPoints[12] = new Point((int)points[12].X, (int)points[12].Y);
+            topLipPoints[13] = new Point((int)points[13].X, (int)points[13].Y);
+            topLipPoints[14] = new Point((int)points[14].X, (int)points[14].Y);
+            topLipPoints[15] = new Point((int)points[15].X, (int)points[15].Y);
+            topLipPoints[16] = new Point((int)points[16].X, (int)points[16].Y);
+            return topLipPoints;
+        }
         private Point[] GetLipLinearBottom(PointF[] points)
         {
             Point[] topLipPoints = new Point[7];
@@ -492,6 +604,39 @@ namespace OpenFace
             topLipPoints[11] = new Point((int)points[54].X, (int)points[54].Y);
             return topLipPoints;
         }
+
+        private FourPoint ComputeSkinArea(PointF[] points)
+        {
+            PointF a = points[0];
+            PointF b = points[1];
+            PointF c = points[13];
+            PointF d = points[14];
+
+            PointF c1, m1, n1, c2, m2, n2;
+            GetCharaks(a, d, out c1, out m1, out n1);
+            GetCharaks(b, c, out c2, out m2, out n2);
+            FourPoint fourPoint = new FourPoint();
+            fourPoint.M1 = new Point((int)m1.X, (int)m1.Y);
+            fourPoint.N1 = new Point((int)n1.X, (int)n1.Y);
+            fourPoint.M2 = new Point((int)m2.X, (int)m2.Y);
+            fourPoint.N2 = new Point((int)n2.X, (int)n2.Y);
+            return fourPoint;
+        }
+
+        private void GetCharaks(PointF a, PointF b, out PointF c, out PointF m, out PointF n)
+        {
+            float xc = (a.X + b.X) / 2;
+            float yc = (a.Y + b.Y) / 2;
+            float xm = (xc + a.X) / 2;
+            float ym = (yc + a.Y) / 2;
+            float xn = (xc + b.X) / 2;
+            float yn = (yc + b.Y) / 2;
+            c = new PointF(xc, yc);
+            m = new PointF(xm, ym);
+            n = new PointF(xn, yn);
+        }
+
+
         public Rectangle getBoundingBox(Point[] arr)
         {
             int minX = 100000;

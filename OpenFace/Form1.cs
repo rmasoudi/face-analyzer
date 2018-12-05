@@ -5,6 +5,7 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using MetroFramework.Controls;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -34,9 +35,48 @@ namespace OpenFace
         private Image<Bgr, Byte> mainColorImage;
         private Image<Gray, byte> mainGrayImage;
         private FaceModel faceModel;
+
+        private void test()
+        {
+            InitModel();
+            DirectoryInfo d = new DirectoryInfo(@"D:\Face\Data_Collection\Data_Collection");
+            FileInfo[] Files = d.GetFiles("*.jpg");
+            foreach (FileInfo file in Files)
+            {
+                image = new Image<Bgr, byte>(file.FullName);
+                mainColorImage = image.Clone();
+                grayImage = image.Convert<Gray, byte>();
+                mainGrayImage = grayImage.Clone();
+                mainPicture.Image = image.ToBitmap();
+                faceModel = GetFaceModel(image, grayImage);
+                Graphics g = Graphics.FromImage(image.Bitmap);
+                Image<Gray,byte> skinMask= ProcessSkin(g, grayImage, image, faceModel, mkParams);
+                //ApplyLipStick(g, faceModel, mkParams);
+                //ApplyEyeLinear(g, faceModel, mkParams);
+                //EyeBrowEffects(g, grayImage, image, faceModel, mkParams);
+                //ColorEyes(g, grayImage, image, faceModel, mkParams);
+
+                //Image<Bgr, byte> combined = new Image<Bgr, byte>(2 * image.Width, image.Height);
+                //combined.ROI = new Rectangle(0, 0, image.Width, image.Height);
+                //mainColorImage.CopyTo(combined);
+                //combined.ROI = new Rectangle(image.Width, 0, image.Width, image.Height);
+                //image.CopyTo(combined);
+                //combined.ROI = Rectangle.Empty;
+
+                skinMask.Save(@"D:\Face\Data_Collection\skin\" + file.Name);
+            }
+        }
+
+        private void log(String log) {
+            File.AppendAllText(@"D:\log.txt", log+ Environment.NewLine);
+        }
+
+
         public Form1()
         {
             InitializeComponent();
+            test();
+            return;
             InitModel();
             image = new Image<Bgr, byte>(@"C:\Users\User\Documents\Visual Studio 2015\Projects\OpenFace\OpenFace\images\2.jpg");
             image = image.Resize(pictureBox1.Width, pictureBox1.Height, Inter.Linear, true);
@@ -46,6 +86,7 @@ namespace OpenFace
             mainPicture.Image = image.ToBitmap();
             faceModel = GetFaceModel(image, grayImage);
         }
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -105,7 +146,6 @@ namespace OpenFace
                 ColorEyes(g, grayImage, image, faceModel, mkParams);
             }
         }
-
         private void appendTime(string title)
         {
             int total = DateTime.UtcNow.Millisecond - lastTimeSnapshot;
@@ -113,16 +153,31 @@ namespace OpenFace
             lastTimeSnapshot = DateTime.UtcNow.Millisecond;
         }
 
-        private void ProcessSkin(Graphics g, Image<Gray, byte> grayImage, Image<Bgr, Byte> image, FaceModel faceModel, MKParams mkParams)
+        private Image<Gray, byte> ProcessSkin(Graphics g, Image<Gray, byte> grayImage, Image<Bgr, Byte> image, FaceModel faceModel, MKParams mkParams)
         {
+            VectorOfVectorOfPoint vvp = new VectorOfVectorOfPoint();
+            VectorOfPoint vp = new VectorOfPoint();
+            vp.Push(faceModel.SkinArea.GetArray());
+            vvp.Push(vp);
+            Image<Bgr, Byte> temp = image.CopyBlank();
+            //CvInvoke.DrawContours(temp,vvp, -1, new Bgr(Color.White).MCvScalar,-1, LineType.EightConnected);
+            CvInvoke.DrawContours(temp, GetVVP(faceModel.FaceBoundry), -1, new Bgr(Color.White).MCvScalar, -1, LineType.EightConnected);
+            CvInvoke.DrawContours(temp, GetVVP(faceModel.LeftEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+            CvInvoke.DrawContours(temp, GetVVP(faceModel.RightEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+            CvInvoke.DrawContours(temp, GetVVP(faceModel.LipBoundry), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+            CvInvoke.DrawContours(temp, GetVVP(faceModel.NoseBottom), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+            
+
+            temp.Save("d:\\skin.jpg");
+
             double[] minValues;
             double[] maxValues;
             Point[] minLocs;
             Point[] maxLocs;
-
+            
             int hairY = faceModel.HeadBox.Y - faceModel.HeadBox.Height / 2 + faceModel.HeadBox.Height / 4;
             Rectangle hairBox = new Rectangle(faceModel.HeadBox.X + faceModel.HeadBox.Width / 2, hairY > 0 ? hairY : 0, faceModel.HeadBox.Width / 2, faceModel.HeadBox.Height / 2);
-
+            
             image.ROI = new Rectangle(faceModel.FaceBox.X + faceModel.FaceBox.Width / 2, faceModel.FaceBox.Y + faceModel.FaceBox.Height / 4, faceModel.FaceBox.Width / 2, faceModel.FaceBox.Height / 2);
             image.MinMax(out minValues, out maxValues, out minLocs, out maxLocs);
             image.ROI = Rectangle.Empty;
@@ -183,6 +238,15 @@ namespace OpenFace
 
                 }
             }
+            return skinMask;
+        }
+
+        private VectorOfVectorOfPoint GetVVP(Point[] points) {
+            VectorOfVectorOfPoint vvp = new VectorOfVectorOfPoint();
+            VectorOfPoint vp = new VectorOfPoint();
+            vp.Push(points);
+            vvp.Push(vp);
+            return vvp;
         }
 
         private bool isInBoxArray(int i, int j, Rectangle[] rects)
@@ -648,14 +712,14 @@ namespace OpenFace
         private void button1_Click(object sender, EventArgs e)
         {
             int fileId = Directory.GetFiles(Constants.PERSIST_PATH, "*", SearchOption.TopDirectoryOnly).Length;
-            File.WriteAllText(Constants.PERSIST_PATH + fileId+".json", Newtonsoft.Json.JsonConvert.SerializeObject(mkParams));
+            File.WriteAllText(Constants.PERSIST_PATH + fileId + ".json", Newtonsoft.Json.JsonConvert.SerializeObject(mkParams));
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             int fileId = Directory.GetFiles(Constants.PERSIST_PATH, "*", SearchOption.TopDirectoryOnly).Length;
             string contents = File.ReadAllText(Constants.PERSIST_PATH + (fileId - 1) + ".json");
-            mkParams= Newtonsoft.Json.JsonConvert.DeserializeObject<MKParams>(contents);
+            mkParams = Newtonsoft.Json.JsonConvert.DeserializeObject<MKParams>(contents);
             Remakup();
         }
     }
