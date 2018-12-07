@@ -50,7 +50,7 @@ namespace OpenFace
                 mainPicture.Image = image.ToBitmap();
                 faceModel = GetFaceModel(image, grayImage);
                 Graphics g = Graphics.FromImage(image.Bitmap);
-                Image<Gray,byte> skinMask= ProcessSkin(g, grayImage, image, faceModel, mkParams);
+                //Image<Gray,byte> skinMask= ProcessSkin(g, grayImage, image, faceModel, mkParams);
                 //ApplyLipStick(g, faceModel, mkParams);
                 //ApplyEyeLinear(g, faceModel, mkParams);
                 //EyeBrowEffects(g, grayImage, image, faceModel, mkParams);
@@ -63,7 +63,19 @@ namespace OpenFace
                 //image.CopyTo(combined);
                 //combined.ROI = Rectangle.Empty;
 
-                skinMask.Save(@"D:\Face\Data_Collection\skin\" + file.Name);
+
+                VectorOfVectorOfPoint vvp = new VectorOfVectorOfPoint();
+                VectorOfPoint vp = new VectorOfPoint();
+                vp.Push(faceModel.SkinArea.GetArray());
+                vvp.Push(vp);
+                Image<Bgr, Byte> temp = image.CopyBlank();
+                //CvInvoke.DrawContours(temp,vvp, -1, new Bgr(Color.White).MCvScalar,-1, LineType.EightConnected);
+                CvInvoke.DrawContours(temp, GetVVP(faceModel.FaceBoundry), -1, new Bgr(Color.White).MCvScalar, -1, LineType.EightConnected);
+                CvInvoke.DrawContours(temp, GetVVP(faceModel.LeftEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+                CvInvoke.DrawContours(temp, GetVVP(faceModel.RightEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+                CvInvoke.DrawContours(temp, GetVVP(faceModel.LipBoundry), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+                CvInvoke.DrawContours(temp, GetVVP(faceModel.NoseBottom), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+                temp.Save("d:\\skin.jpg");
             }
         }
 
@@ -75,8 +87,7 @@ namespace OpenFace
         public Form1()
         {
             InitializeComponent();
-            test();
-            return;
+            ToolOptions.Load();
             InitModel();
             image = new Image<Bgr, byte>(Constants.IMAGE_PATH);
             image = image.Resize(pictureBox1.Width, pictureBox1.Height, Inter.Linear, true);
@@ -155,21 +166,6 @@ namespace OpenFace
 
         private Image<Gray, byte> ProcessSkin(Graphics g, Image<Gray, byte> grayImage, Image<Bgr, Byte> image, FaceModel faceModel, MKParams mkParams)
         {
-            VectorOfVectorOfPoint vvp = new VectorOfVectorOfPoint();
-            VectorOfPoint vp = new VectorOfPoint();
-            vp.Push(faceModel.SkinArea.GetArray());
-            vvp.Push(vp);
-            Image<Bgr, Byte> temp = image.CopyBlank();
-            //CvInvoke.DrawContours(temp,vvp, -1, new Bgr(Color.White).MCvScalar,-1, LineType.EightConnected);
-            CvInvoke.DrawContours(temp, GetVVP(faceModel.FaceBoundry), -1, new Bgr(Color.White).MCvScalar, -1, LineType.EightConnected);
-            CvInvoke.DrawContours(temp, GetVVP(faceModel.LeftEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-            CvInvoke.DrawContours(temp, GetVVP(faceModel.RightEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-            CvInvoke.DrawContours(temp, GetVVP(faceModel.LipBoundry), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-            CvInvoke.DrawContours(temp, GetVVP(faceModel.NoseBottom), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-            
-
-            temp.Save("d:\\skin.jpg");
-
             double[] minValues;
             double[] maxValues;
             Point[] minLocs;
@@ -383,7 +379,7 @@ namespace OpenFace
             switch (code)
             {
                 case LIP_STICK_COMMAND:
-                    array = StaticParams.LipColors;
+                    array = ToolOptions.GetLipStickColors("ArtDeco");
                     break;
                 case LIP_LINE_COMMAND:
                     array = StaticParams.LipLineColors;

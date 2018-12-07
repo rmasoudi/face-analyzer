@@ -16,5 +16,6 @@ namespace OpenFace
         public const String IMAGE_PATH = @"E:\Pic\2.jpg";
 
         public const String PERSIST_PATH = @"E:\models\";
+        public const String OPTIONS_PATH = @"C:\Users\fr\Documents\NetBeansProjects\mkmodels\public_html\mk_models.json";
     }
 }
