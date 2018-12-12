@@ -59,6 +59,11 @@ namespace OpenFace
                 con.Draw(faceModel.LeftCheek.GetBoundingBox(), new Bgr(Color.Red), 2);
                 #endregion
 
+                con.FillConvexPoly(faceModel.TopLipPoints, new Bgr(mkParams.LipStickColor));
+                con.FillConvexPoly(faceModel.BottomLipPoints, new Bgr(mkParams.LipStickColor));
+                DrawPoints(faceModel.TopLipPoints,con);
+                DrawPoints(faceModel.BottomLipPoints,con);
+
                 con.Save("d:\\skin.jpg");
             }
         }
@@ -111,6 +116,12 @@ namespace OpenFace
             vp.Push(points);
             vvp.Push(vp);
             return vvp;
+        }
+
+        private static void DrawPoints(Point[] points, Image<Bgr, Double> con) {
+            foreach (Point point in points) {
+                con.Draw(new CircleF(new PointF(point.X-2, point.Y-2),4),new Bgr(Color.Black),1);
+            }
         }
     }
 }

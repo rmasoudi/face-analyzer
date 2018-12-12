@@ -605,16 +605,18 @@ namespace OpenFace
         private Point[] GetBottomLipPoints(PointF[] points)
         {
             Point[] topLipPoints = new Point[10];
-            topLipPoints[0] = new Point((int)points[65].X, (int)points[65].Y);
-            topLipPoints[1] = new Point((int)points[66].X, (int)points[66].Y);
-            topLipPoints[2] = new Point((int)points[67].X, (int)points[67].Y);
-            topLipPoints[3] = new Point((int)points[54].X, (int)points[54].Y);
-            topLipPoints[4] = new Point((int)points[55].X, (int)points[55].Y);
-            topLipPoints[5] = new Point((int)points[56].X, (int)points[56].Y);
-            topLipPoints[6] = new Point((int)points[57].X, (int)points[57].Y);
-            topLipPoints[7] = new Point((int)points[58].X, (int)points[58].Y);
-            topLipPoints[8] = new Point((int)points[59].X, (int)points[59].Y);
-            topLipPoints[9] = new Point((int)points[60].X, (int)points[60].Y);
+            topLipPoints[0] = new Point((int)points[54].X, (int)points[54].Y);
+            topLipPoints[1] = new Point((int)points[55].X, (int)points[55].Y);
+            topLipPoints[2] = new Point((int)points[56].X, (int)points[56].Y);
+            topLipPoints[3] = new Point((int)points[57].X, (int)points[57].Y);
+            topLipPoints[4] = new Point((int)points[58].X, (int)points[58].Y);
+            topLipPoints[5] = new Point((int)points[59].X, (int)points[59].Y);
+            topLipPoints[6] = new Point((int)points[48].X, (int)points[48].Y);
+            topLipPoints[7] = new Point((int)points[60].X, (int)points[60].Y);
+            topLipPoints[8] = new Point((int)points[67].X, (int)points[67].Y);
+            topLipPoints[9] = new Point((int)points[66].X, (int)points[66].Y);
+            topLipPoints[9] = new Point((int)points[65].X, (int)points[65].Y);
+            topLipPoints[9] = new Point((int)points[64].X, (int)points[64].Y);
             return topLipPoints;
         }
 
@@ -626,13 +628,13 @@ namespace OpenFace
             topLipPoints[2] = new Point((int)points[62].X, (int)points[62].Y);
             topLipPoints[3] = new Point((int)points[63].X, (int)points[63].Y);
             topLipPoints[4] = new Point((int)points[64].X, (int)points[64].Y);
-            topLipPoints[5] = new Point((int)points[48].X, (int)points[48].Y);
-            topLipPoints[6] = new Point((int)points[49].X, (int)points[49].Y);
-            topLipPoints[7] = new Point((int)points[50].X, (int)points[50].Y);
+            topLipPoints[5] = new Point((int)points[54].X, (int)points[54].Y);
+            topLipPoints[6] = new Point((int)points[53].X, (int)points[53].Y);
+            topLipPoints[7] = new Point((int)points[52].X, (int)points[52].Y);
             topLipPoints[8] = new Point((int)points[51].X, (int)points[51].Y);
-            topLipPoints[9] = new Point((int)points[52].X, (int)points[52].Y);
-            topLipPoints[10] = new Point((int)points[53].X, (int)points[53].Y);
-            topLipPoints[11] = new Point((int)points[54].X, (int)points[54].Y);
+            topLipPoints[9] = new Point((int)points[50].X, (int)points[50].Y);
+            topLipPoints[10] = new Point((int)points[49].X, (int)points[49].Y);
+            topLipPoints[11] = new Point((int)points[48].X, (int)points[48].Y);
             return topLipPoints;
         }
 
