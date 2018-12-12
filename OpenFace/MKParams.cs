@@ -6,7 +6,7 @@ namespace OpenFace
     {
         private double skinRatio = .95;
         private double hairRatio = .9;
-        private double faceAlpha = .1;
+        private double faceAlpha = .5;
         private double hairAlpha = .9;
         private double eyebrowAlpha = .18;
         private double eyeLineSlope = .5;

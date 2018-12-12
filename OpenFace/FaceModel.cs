@@ -32,7 +32,8 @@ namespace OpenFace
         Point leftEyeAnglePoint;
         Point leftEyeTopPoint;
         Point rightEyeAnglePoint;
-        FourPoint skinArea;
+        FourPoint rightCheek;
+        FourPoint leftCheek;
         FourPoint chainArea;
 
         public FaceModel(PointF[] points, Rectangle faceRect)
@@ -64,7 +65,8 @@ namespace OpenFace
             LeftEyeAnglePoint = new Point((int)points[36].X, (int)points[36].Y);
             LeftEyeTopPoint = new Point((int)points[37].X, (int)points[37].Y);
             RightEyeAnglePoint = new Point((int)points[45].X, (int)points[45].Y);
-            SkinArea = ComputeSkinArea(points);
+            RightCheek = ComputeRightCheek(points);
+            LeftCheek = ComputeLeftCheek(points);
             ChainArea = ComputeChainArea(points);
             HeadArea = ComputeHeadArea(points);
             LipBoundry = ComputeLipBoundry(points);
@@ -371,19 +373,6 @@ namespace OpenFace
             }
         }
 
-        public FourPoint SkinArea
-        {
-            get
-            {
-                return skinArea;
-            }
-
-            set
-            {
-                skinArea = value;
-            }
-        }
-
         public Point[] LipBoundry
         {
             get
@@ -446,6 +435,32 @@ namespace OpenFace
             set
             {
                 chainArea = value;
+            }
+        }
+
+        public FourPoint RightCheek
+        {
+            get
+            {
+                return rightCheek;
+            }
+
+            set
+            {
+                rightCheek = value;
+            }
+        }
+
+        public FourPoint LeftCheek
+        {
+            get
+            {
+                return leftCheek;
+            }
+
+            set
+            {
+                leftCheek = value;
             }
         }
 
@@ -621,12 +636,29 @@ namespace OpenFace
             return topLipPoints;
         }
 
-        private FourPoint ComputeSkinArea(PointF[] points)
+        private FourPoint ComputeRightCheek(PointF[] points)
         {
-            PointF a = points[0];
-            PointF b = points[1];
+            PointF a = points[29];
+            PointF b = points[30];
             PointF c = points[13];
             PointF d = points[14];
+
+            PointF c1, m1, n1, c2, m2, n2;
+            GetCharaks(a, d, out c1, out m1, out n1);
+            GetCharaks(b, c, out c2, out m2, out n2);
+            FourPoint fourPoint = new FourPoint();
+            fourPoint.M1 = new Point((int)m1.X, (int)m1.Y);
+            fourPoint.N1 = new Point((int)n1.X, (int)n1.Y);
+            fourPoint.M2 = new Point((int)m2.X, (int)m2.Y);
+            fourPoint.N2 = new Point((int)n2.X, (int)n2.Y);
+            return fourPoint;
+        }
+        private FourPoint ComputeLeftCheek(PointF[] points)
+        {
+            PointF a = points[2];
+            PointF b = points[3];
+            PointF c = points[30];
+            PointF d = points[29];
 
             PointF c1, m1, n1, c2, m2, n2;
             GetCharaks(a, d, out c1, out m1, out n1);
@@ -666,7 +698,7 @@ namespace OpenFace
             int x = FaceBox.Left;
             int y = FaceBox.Top;
             int width = faceBox.Width;
-            int height = ((int)Math.Max(points[19].Y, points[24].Y)) - faceBox.Top;
+            int height = ((int)Math.Max(points[40].Y, points[46].Y)) - faceBox.Top;
             int delta = (int)(.2 * y);
             y -= delta;
             height += delta;

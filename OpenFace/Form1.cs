@@ -36,64 +36,6 @@ namespace OpenFace
         private Image<Gray, byte> mainGrayImage;
         private FaceModel faceModel;
 
-        private void test()
-        {
-            InitModel();
-            DirectoryInfo d = new DirectoryInfo(@"D:\Facupdae\Data_Collection\Data_Collection");
-            FileInfo[] Files = d.GetFiles("*.jpg");
-            foreach (FileInfo file in Files)
-            {
-                image = new Image<Bgr, byte>(file.FullName);
-                mainColorImage = image.Clone();
-                grayImage = image.Convert<Gray, byte>();
-                mainGrayImage = grayImage.Clone();
-                mainPicture.Image = image.ToBitmap();
-                faceModel = GetFaceModel(image, grayImage);
-                Graphics g = Graphics.FromImage(image.Bitmap);
-                //Image<Gray,byte> skinMask= ProcessSkin(g, grayImage, image, faceModel, mkParams);
-                //ApplyLipStick(g, faceModel, mkParams);
-                //ApplyEyeLinear(g, faceModel, mkParams);
-                //EyeBrowEffects(g, grayImage, image, faceModel, mkParams);
-                //ColorEyes(g, grayImage, image, faceModel, mkParams);
-
-                //Image<Bgr, byte> combined = new Image<Bgr, byte>(2 * image.Width, image.Height);
-                //combined.ROI = new Rectangle(0, 0, image.Width, image.Height);
-                //mainColorImage.CopyTo(combined);
-                //combined.ROI = new Rectangle(image.Width, 0, image.Width, image.Height);
-                //image.CopyTo(combined);
-                //combined.ROI = Rectangle.Empty;
-
-
-
-                Bgr from1;
-                Bgr to1;
-                faceModel.SkinArea.GetColorRange(image, out from1, out to1);
-
-                Bgr from2;
-                Bgr to2;
-                faceModel.ChainArea.GetColorRange(image, out from2, out to2);
-                Bgr from = new Bgr(Math.Min(from1.Blue, from2.Blue), Math.Min(from1.Green, from2.Green), Math.Min(from1.Red, from2.Red));
-                Bgr to = new Bgr(Math.Max(to1.Blue, to2.Blue), Math.Max(to1.Green, to2.Green), Math.Max(to1.Red, to2.Red));
-                Image<Gray, byte> skinMask = image.InRange(from, to);
-
-                Image<Bgr, Double> con = image.Convert<Bgr, Double>();
-                Image<Bgr, Double> temp = new Image<Bgr, Double>(con.Width, con.Height, new Bgr(255, 255, 255));
-                con.AccumulateWeighted(temp, .3, skinMask);
-
-
-                con.Save("d:\\skin.jpg");
-
-                //Image<Gray, Byte> edges = image.Canny(70, 70 * 3);
-
-                //CvInvoke.DrawContours(temp, GetVVP(faceModel.FaceBoundry), -1, new Bgr(Color.White).MCvScalar, -1, LineType.EightConnected);
-                //CvInvoke.DrawContours(temp, GetVVP(faceModel.LeftEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-                //CvInvoke.DrawContours(temp, GetVVP(faceModel.RightEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-                //CvInvoke.DrawContours(temp, GetVVP(faceModel.LipBoundry), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-                //CvInvoke.DrawContours(temp, GetVVP(faceModel.NoseBottom), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-                //temp.Save("d:\\skin.jpg");
-            }
-        }
-
         private void log(String log)
         {
             File.AppendAllText(@"D:\log.txt", log + Environment.NewLine);
@@ -103,7 +45,7 @@ namespace OpenFace
         public Form1()
         {
             InitializeComponent();
-            test();
+            Labrator.test();
             return;
             ToolOptions.Load();
             InitModel();
