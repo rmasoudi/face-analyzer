@@ -39,7 +39,7 @@ namespace OpenFace
         private void test()
         {
             InitModel();
-            DirectoryInfo d = new DirectoryInfo(@"D:\Face\Data_Collection\Data_Collection");
+            DirectoryInfo d = new DirectoryInfo(@"D:\Facupdae\Data_Collection\Data_Collection");
             FileInfo[] Files = d.GetFiles("*.jpg");
             foreach (FileInfo file in Files)
             {
@@ -64,29 +64,47 @@ namespace OpenFace
                 //combined.ROI = Rectangle.Empty;
 
 
-                VectorOfVectorOfPoint vvp = new VectorOfVectorOfPoint();
-                VectorOfPoint vp = new VectorOfPoint();
-                vp.Push(faceModel.SkinArea.GetArray());
-                vvp.Push(vp);
-                Image<Bgr, Byte> temp = image.CopyBlank();
-                //CvInvoke.DrawContours(temp,vvp, -1, new Bgr(Color.White).MCvScalar,-1, LineType.EightConnected);
-                CvInvoke.DrawContours(temp, GetVVP(faceModel.FaceBoundry), -1, new Bgr(Color.White).MCvScalar, -1, LineType.EightConnected);
-                CvInvoke.DrawContours(temp, GetVVP(faceModel.LeftEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-                CvInvoke.DrawContours(temp, GetVVP(faceModel.RightEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-                CvInvoke.DrawContours(temp, GetVVP(faceModel.LipBoundry), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-                CvInvoke.DrawContours(temp, GetVVP(faceModel.NoseBottom), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
-                temp.Save("d:\\skin.jpg");
+
+                Bgr from1;
+                Bgr to1;
+                faceModel.SkinArea.GetColorRange(image, out from1, out to1);
+
+                Bgr from2;
+                Bgr to2;
+                faceModel.ChainArea.GetColorRange(image, out from2, out to2);
+                Bgr from = new Bgr(Math.Min(from1.Blue, from2.Blue), Math.Min(from1.Green, from2.Green), Math.Min(from1.Red, from2.Red));
+                Bgr to = new Bgr(Math.Max(to1.Blue, to2.Blue), Math.Max(to1.Green, to2.Green), Math.Max(to1.Red, to2.Red));
+                Image<Gray, byte> skinMask = image.InRange(from, to);
+
+                Image<Bgr, Double> con = image.Convert<Bgr, Double>();
+                Image<Bgr, Double> temp = new Image<Bgr, Double>(con.Width, con.Height, new Bgr(255, 255, 255));
+                con.AccumulateWeighted(temp, .3, skinMask);
+
+
+                con.Save("d:\\skin.jpg");
+
+                //Image<Gray, Byte> edges = image.Canny(70, 70 * 3);
+
+                //CvInvoke.DrawContours(temp, GetVVP(faceModel.FaceBoundry), -1, new Bgr(Color.White).MCvScalar, -1, LineType.EightConnected);
+                //CvInvoke.DrawContours(temp, GetVVP(faceModel.LeftEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+                //CvInvoke.DrawContours(temp, GetVVP(faceModel.RightEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+                //CvInvoke.DrawContours(temp, GetVVP(faceModel.LipBoundry), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+                //CvInvoke.DrawContours(temp, GetVVP(faceModel.NoseBottom), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+                //temp.Save("d:\\skin.jpg");
             }
         }
 
-        private void log(String log) {
-            File.AppendAllText(@"D:\log.txt", log+ Environment.NewLine);
+        private void log(String log)
+        {
+            File.AppendAllText(@"D:\log.txt", log + Environment.NewLine);
         }
 
 
         public Form1()
         {
             InitializeComponent();
+            test();
+            return;
             ToolOptions.Load();
             InitModel();
             image = new Image<Bgr, byte>(Constants.IMAGE_PATH);
@@ -170,10 +188,10 @@ namespace OpenFace
             double[] maxValues;
             Point[] minLocs;
             Point[] maxLocs;
-            
-            int hairY = faceModel.HeadBox.Y - faceModel.HeadBox.Height / 2 + faceModel.HeadBox.Height / 4;
-            Rectangle hairBox = new Rectangle(faceModel.HeadBox.X + faceModel.HeadBox.Width / 2, hairY > 0 ? hairY : 0, faceModel.HeadBox.Width / 2, faceModel.HeadBox.Height / 2);
-            
+
+            //int hairY = faceModel.HeadBox.Y - faceModel.HeadBox.Height / 2 + faceModel.HeadBox.Height / 4;
+            //Rectangle hairBox = new Rectangle(faceModel.HeadBox.X + faceModel.HeadBox.Width / 2, hairY > 0 ? hairY : 0, faceModel.HeadBox.Width / 2, faceModel.HeadBox.Height / 2);
+
             image.ROI = new Rectangle(faceModel.FaceBox.X + faceModel.FaceBox.Width / 2, faceModel.FaceBox.Y + faceModel.FaceBox.Height / 4, faceModel.FaceBox.Width / 2, faceModel.FaceBox.Height / 2);
             image.MinMax(out minValues, out maxValues, out minLocs, out maxLocs);
             image.ROI = Rectangle.Empty;
@@ -181,19 +199,6 @@ namespace OpenFace
             double avg1 = (minValues[0] + maxValues[0]) * mkParams.SkinRatio;
             double avg2 = (minValues[0] + maxValues[0]) * mkParams.SkinRatio;
             Image<Gray, byte> skinMask = image.InRange(new Bgr(minValues[0], minValues[1], minValues[2]), new Bgr(avg0, avg1, avg2));
-
-
-            //image.ROI = new Rectangle(hairBox.X + hairBox.Width / 2, hairBox.Y + hairBox.Height / 4, hairBox.Width / 2, hairBox.Height / 2);
-            //image.MinMax(out minValues, out maxValues, out minLocs, out maxLocs);
-            //image.ROI = Rectangle.Empty;
-            //avg0 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
-            //avg1 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
-            //avg2 = (minValues[0] + maxValues[0]) * mkParams.HairRatio;
-            //Image<Gray, byte> hairMask = image.InRange(new Bgr(minValues[0], minValues[1], minValues[2]), new Bgr(avg0, avg1, avg2));
-
-            //ImageViewer viewer = new ImageViewer();
-            //viewer.Image = hairMask;
-            //viewer.ShowDialog();
 
             for (int i = faceModel.FaceBox.Bottom - 1; i >= faceModel.FaceBox.Top; i--)
             {
@@ -204,7 +209,6 @@ namespace OpenFace
                     int oldGreen = oldColor.G;
                     int oldBlue = oldColor.B;
                     bool inFace = isInBox(i, j, faceModel.FaceBox);
-                    bool inHair = isInBox(i, j, hairBox);
                     if (skinMask[i, j].MCvScalar.V0 == 0 && inFace && mkParams.SkinEnabled)
                     {
                         Color maskColor = mkParams.SkinMaskColor;
@@ -218,26 +222,14 @@ namespace OpenFace
                         Color newColor = Color.FromArgb(newRed, newGreen, newBlue);
                         image.Bitmap.SetPixel(j, i, newColor);
                     }
-                    //else if (!isInBoxArray(i, j, faceModel.LandmarkRects) && skinMask[i, j].MCvScalar.V0 != 0 && hairMask[i, j].MCvScalar.V0 == 255 && mkParams.HairEnabled)
-                    //{
-                    //    Color maskColor = mkParams.HairMaskColor;
-                    //    int maskRed = maskColor.R;
-                    //    int maskGreen = maskColor.G;
-                    //    int maskBlue = maskColor.B;
-
-                    //    int newRed = (int)(mkParams.HairAlpha * maskRed + (1 - mkParams.HairAlpha) * oldRed);
-                    //    int newGreen = (int)(mkParams.HairAlpha * maskGreen + (1 - mkParams.HairAlpha) * oldGreen);
-                    //    int newBlue = (int)(mkParams.HairAlpha * maskBlue + (1 - mkParams.HairAlpha) * oldBlue);
-                    //    Color newColor = Color.FromArgb(newRed, newGreen, newBlue);
-                    //    image.Bitmap.SetPixel(j, i, newColor);
-                    //}
 
                 }
             }
             return skinMask;
         }
 
-        private VectorOfVectorOfPoint GetVVP(Point[] points) {
+        private VectorOfVectorOfPoint GetVVP(Point[] points)
+        {
             VectorOfVectorOfPoint vvp = new VectorOfVectorOfPoint();
             VectorOfPoint vp = new VectorOfPoint();
             vp.Push(points);

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace OpenFace
 {
@@ -16,7 +17,7 @@ namespace OpenFace
         Rectangle leftEyeBox;
         Point[] rightEyePoints;
         Rectangle rightEyeBox;
-        Rectangle headBox;
+        Rectangle headArea;
         Rectangle[] landmarkRects;
         Point[] bottomLipPoints;
         Point[] topLipPoints;
@@ -32,6 +33,7 @@ namespace OpenFace
         Point leftEyeTopPoint;
         Point rightEyeAnglePoint;
         FourPoint skinArea;
+        FourPoint chainArea;
 
         public FaceModel(PointF[] points, Rectangle faceRect)
         {
@@ -50,7 +52,6 @@ namespace OpenFace
             RightEyeBox = getBoundingBox(RightEyePoints);
             TopLipPoints = GetTopLipPoints(points);
             BottomLipPoints = GetBottomLipPoints(points);
-            HeadBox = new Rectangle(LeftEyebrowBox.Left, faceRect.Y, RightEyebrowBox.Right - LeftEyebrowBox.Left, System.Math.Min(LeftEyebrowBox.Top, RightEyebrowBox.Top) - faceRect.Top);
             LandmarkRects = new Rectangle[6];
             LandmarkRects[0] = LeftEyebrowBox;
             LandmarkRects[1] = RightEyebrowBox;
@@ -64,6 +65,8 @@ namespace OpenFace
             LeftEyeTopPoint = new Point((int)points[37].X, (int)points[37].Y);
             RightEyeAnglePoint = new Point((int)points[45].X, (int)points[45].Y);
             SkinArea = ComputeSkinArea(points);
+            ChainArea = ComputeChainArea(points);
+            HeadArea = ComputeHeadArea(points);
             LipBoundry = ComputeLipBoundry(points);
             NoseBottom = ComputeNoseBottom(points);
             FaceBoundry = ComputeFaceBoundry(points);
@@ -222,19 +225,6 @@ namespace OpenFace
             set
             {
                 rightEyeBox = value;
-            }
-        }
-
-        public Rectangle HeadBox
-        {
-            get
-            {
-                return headBox;
-            }
-
-            set
-            {
-                headBox = value;
             }
         }
 
@@ -433,6 +423,32 @@ namespace OpenFace
             }
         }
 
+        public Rectangle HeadArea
+        {
+            get
+            {
+                return headArea;
+            }
+
+            set
+            {
+                headArea = value;
+            }
+        }
+
+        public FourPoint ChainArea
+        {
+            get
+            {
+                return chainArea;
+            }
+
+            set
+            {
+                chainArea = value;
+            }
+        }
+
         private Point[] GetLeftEyebrowPoints(PointF[] points)
         {
             Point[] topLipPoints = new Point[5];
@@ -622,7 +638,40 @@ namespace OpenFace
             fourPoint.N2 = new Point((int)n2.X, (int)n2.Y);
             return fourPoint;
         }
+        private FourPoint ComputeChainArea(PointF[] points)
+        {
+            PointF a = points[56];
+            PointF b = points[5];
+            PointF c = points[9];
 
+            int m1x = (int)(a.X * .1 + b.X * .9);
+            int m1y = (int)(a.Y * .1 + b.Y * .9);
+            int n1x = (int)(a.X * .1 + c.X * .9);
+            int n1y = (int)(a.Y * .1 + c.Y * .9);
+            int m2x = (int)(a.X * .9 + b.X * .1);
+            int m2y = (int)(a.Y * .9 + b.Y * .1);
+            int n2x = (int)(a.X * .9 + c.X * .1);
+            int n2y = (int)(a.Y * .9 + c.Y * .1);
+
+            FourPoint fourPoint = new FourPoint();
+            fourPoint.M1 = new Point(m1x, m1y);
+            fourPoint.N1 = new Point(n1x, n1y);
+            fourPoint.M2 = new Point(m2x, m2y);
+            fourPoint.N2 = new Point(n2x, n2y);
+            return fourPoint;
+        }
+
+        private Rectangle ComputeHeadArea(PointF[] points)
+        {
+            int x = FaceBox.Left;
+            int y = FaceBox.Top;
+            int width = faceBox.Width;
+            int height = ((int)Math.Max(points[19].Y, points[24].Y)) - faceBox.Top;
+            int delta = (int)(.2 * y);
+            y -= delta;
+            height += delta;
+            return new Rectangle(x, y, width, height);
+        }
         private void GetCharaks(PointF a, PointF b, out PointF c, out PointF m, out PointF n)
         {
             float xc = (a.X + b.X) / 2;
@@ -637,7 +686,7 @@ namespace OpenFace
         }
 
 
-        public Rectangle getBoundingBox(Point[] arr)
+        public static Rectangle getBoundingBox(Point[] arr)
         {
             int minX = 100000;
             int minY = 100000;
