@@ -4,6 +4,7 @@ using Emgu.CV.Face;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using MetroFramework.Controls;
+using OpenFace.constants;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -45,9 +46,9 @@ namespace OpenFace
         public Form1()
         {
             InitializeComponent();
-            Labrator.test();
+
+            DBUtil.SetTypes();
             return;
-            ToolOptions.Load();
             InitModel();
             image = new Image<Bgr, byte>(Constants.IMAGE_PATH);
             image = image.Resize(pictureBox1.Width, pictureBox1.Height, Inter.Linear, true);
@@ -313,7 +314,7 @@ namespace OpenFace
             switch (code)
             {
                 case LIP_STICK_COMMAND:
-                    array = ToolOptions.GetLipStickColors("ArtDeco");
+                    array = DBUtil.GetToolColors(ToolConstants.TOOLS_LIPSTICK);
                     break;
                 case LIP_LINE_COMMAND:
                     array = StaticParams.LipLineColors;
@@ -651,6 +652,11 @@ namespace OpenFace
             string contents = File.ReadAllText(Constants.PERSIST_PATH + (fileId - 1) + ".json");
             mkParams = Newtonsoft.Json.JsonConvert.DeserializeObject<MKParams>(contents);
             Remakup();
+        }
+
+        private void editableList1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
