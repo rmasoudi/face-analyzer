@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace OpenFace
 {
@@ -310,6 +309,15 @@ namespace OpenFace
                 }
             }
             return result;
+        }
+
+        public static List<FinalProductModel> GetProducts()
+        {
+            using (var db = new LiteDatabase(DB_PATH))
+            {
+                var products = db.GetCollection<FinalProductModel>("tool_lipstick");
+                return products.Find(x => true, 0, 10).ToList();
+            }
         }
 
 

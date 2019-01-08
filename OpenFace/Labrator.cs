@@ -3,6 +3,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Face;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using OpenFace.models;
 using System;
 using System.Drawing;
 using System.IO;
@@ -11,16 +12,16 @@ namespace OpenFace
 {
     public class Labrator
     {
-        private static Image<Bgr, Byte> image;
-        private static Image<Gray, byte> grayImage;
-        private static Image<Bgr, Byte> mainColorImage;
-        private static Image<Gray, byte> mainGrayImage;
-        private static FaceModel faceModel;
         private static CascadeClassifier faceDetector;
         private static FacemarkLBF facemark;
-        private static MKParams mkParams = new MKParams();
         public static void test()
         {
+            Image<Bgr, Byte> image;
+            Image<Gray, byte> grayImage;
+            Image<Bgr, Byte> mainColorImage;
+            Image<Gray, byte> mainGrayImage;
+            FaceModel faceModel;
+            MKParams mkParams = new MKParams();
             InitModel();
             DirectoryInfo d = new DirectoryInfo(@"D:\Face\Data_Collection\Data_Collection");
             FileInfo[] Files = d.GetFiles("*.jpg");
@@ -34,7 +35,8 @@ namespace OpenFace
 
                 #region Face Skin
                 Bgr from = new Bgr(), to = new Bgr();
-                GetColorRange(new FourPoint[] { faceModel.RightCheek, faceModel.LeftCheek, faceModel.ChainArea }, out from, out to);
+                GetColorRange(new FourPoint[] { faceModel.RightCheek, faceModel.LeftCheek, faceModel.ChainArea
+    }, image, out from, out to);
                 Image<Bgr, Double> con = image.Convert<Bgr, Double>();
 
                 image.ROI = faceModel.HeadArea;
@@ -61,14 +63,43 @@ namespace OpenFace
 
                 con.FillConvexPoly(faceModel.TopLipPoints, new Bgr(mkParams.LipStickColor));
                 con.FillConvexPoly(faceModel.BottomLipPoints, new Bgr(mkParams.LipStickColor));
-                DrawPoints(faceModel.TopLipPoints,con);
-                DrawPoints(faceModel.BottomLipPoints,con);
+                DrawPoints(faceModel.TopLipPoints, con);
+                DrawPoints(faceModel.BottomLipPoints, con);
 
                 con.Save("d:\\skin.jpg");
             }
         }
+        public static Bitmap Process(FaceCacheModel cacheItem)
+        {
+            MKParams mkParams = new MKParams();
 
-        private static void GetColorRange(FourPoint[] areas, out Bgr from, out Bgr to)
+            Bgr from = new Bgr(), to = new Bgr();
+            GetColorRange(new FourPoint[] { cacheItem.Model.RightCheek, cacheItem.Model.LeftCheek, cacheItem.Model.ChainArea }, cacheItem.Image, out from, out to);
+            Image<Bgr, Double> con = cacheItem.Image.Convert<Bgr, Double>();
+
+            cacheItem.Image.ROI = cacheItem.Model.HeadArea;
+            Image<Gray, byte> headColorMask = cacheItem.Image.InRange(from, to);
+            cacheItem.Image.ROI = Rectangle.Empty;
+
+
+            Image<Gray, byte> skinMask = new Image<Gray, byte>(cacheItem.Image.Width, cacheItem.Image.Height, new Gray(0));
+            skinMask.ROI = cacheItem.Model.HeadArea;
+            headColorMask.CopyTo(skinMask);
+            skinMask.ROI = Rectangle.Empty;
+
+            CvInvoke.DrawContours(skinMask, GetVVP(cacheItem.Model.FaceBoundry), -1, new Bgr(Color.White).MCvScalar, -1, LineType.EightConnected);
+            CvInvoke.DrawContours(skinMask, GetVVP(cacheItem.Model.LeftEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+            CvInvoke.DrawContours(skinMask, GetVVP(cacheItem.Model.RightEyePoints), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+            CvInvoke.DrawContours(skinMask, GetVVP(cacheItem.Model.LipBoundry), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+            CvInvoke.DrawContours(skinMask, GetVVP(cacheItem.Model.NoseBottom), -1, new Bgr(Color.Black).MCvScalar, -1, LineType.EightConnected);
+            Image<Bgr, Double> temp = new Image<Bgr, Double>(con.Width, con.Height, new Bgr(mkParams.SkinMaskColor));
+            con.AccumulateWeighted(temp, mkParams.FaceAlpha, skinMask);
+            con.Draw(cacheItem.Model.HeadArea, new Bgr(Color.Blue), 2);
+            con.Draw(cacheItem.Model.RightCheek.GetBoundingBox(), new Bgr(Color.Red), 2);
+            con.Draw(cacheItem.Model.LeftCheek.GetBoundingBox(), new Bgr(Color.Red), 2);
+            return con.Bitmap;
+        }
+        private static void GetColorRange(FourPoint[] areas, Image<Bgr, byte> image, out Bgr from, out Bgr to)
         {
             from = new Bgr(255, 255, 255);
             to = new Bgr(0, 0, 0);
@@ -80,7 +111,7 @@ namespace OpenFace
                 to = new Bgr(Math.Max(to.Blue, tempTo.Blue), Math.Max(to.Green, tempTo.Green), Math.Max(to.Red, tempTo.Red));
             }
         }
-        private static void InitModel()
+        public static void InitModel()
         {
             faceDetector = new CascadeClassifier(Constants.FACE_DETECTOR_PATH);
             FacemarkLBFParams fParams = new FacemarkLBFParams();
@@ -94,7 +125,7 @@ namespace OpenFace
             facemark.LoadModel(fParams.ModelFile);
         }
 
-        private static FaceModel GetFaceModel(Image<Bgr, Byte> image, Image<Gray, byte> grayImage)
+        public static FaceModel GetFaceModel(Image<Bgr, Byte> image, Image<Gray, byte> grayImage)
         {
             grayImage._EqualizeHist();
             VectorOfRect faces = new VectorOfRect(faceDetector.DetectMultiScale(grayImage));
@@ -118,9 +149,11 @@ namespace OpenFace
             return vvp;
         }
 
-        private static void DrawPoints(Point[] points, Image<Bgr, Double> con) {
-            foreach (Point point in points) {
-                con.Draw(new CircleF(new PointF(point.X-2, point.Y-2),4),new Bgr(Color.Black),1);
+        private static void DrawPoints(Point[] points, Image<Bgr, Double> con)
+        {
+            foreach (Point point in points)
+            {
+                con.Draw(new CircleF(new PointF(point.X - 2, point.Y - 2), 4), new Bgr(Color.Black), 1);
             }
         }
     }

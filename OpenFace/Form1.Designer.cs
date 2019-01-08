@@ -179,10 +179,10 @@
             // colorPanel
             // 
             this.colorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.colorPanel.Location = new System.Drawing.Point(3, 17);
+            this.colorPanel.Location = new System.Drawing.Point(3, 28);
             this.colorPanel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.colorPanel.Name = "colorPanel";
-            this.colorPanel.Size = new System.Drawing.Size(683, 26);
+            this.colorPanel.Size = new System.Drawing.Size(683, 15);
             this.colorPanel.TabIndex = 3;
             // 
             // colorBox1
@@ -225,7 +225,6 @@
             this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(821, 478);
             this.metroTabControl1.TabIndex = 13;
-            this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
             // 
             // metroTabPage1
@@ -235,7 +234,7 @@
             this.metroTabPage1.Controls.Add(this.mainPicture);
             this.metroTabPage1.Controls.Add(this.colorBox1);
             this.metroTabPage1.Controls.Add(this.flowLayoutPanel1);
-            this.metroTabPage1.Font = new System.Drawing.Font("Arial", 8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.metroTabPage1.Font = new System.Drawing.Font("B Yekan", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.metroTabPage1.HorizontalScrollbarBarColor = true;
             this.metroTabPage1.HorizontalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.HorizontalScrollbarSize = 10;

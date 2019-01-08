@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>My App</title>
+        <link rel="stylesheet" href="styles/framework7.ios.min.css">
+        <link rel="stylesheet" href="styles/framework7.ios.colors.min.css">
+        <link rel="stylesheet" href="styles/framework7.ios.rtl.min.css">
+        <link rel="stylesheet" href="styles/font-awesome.min.css">
+        <link rel="stylesheet" href="styles/style.css">
+    </head>
+    <body>
+        <div class="statusbar-overlay"></div>
+        <div class="panel-overlay"></div>
+        <div class="views">
+            <div class="view view-main">
+
+                <div class="navbar">
+                </div>
+
+                <div class="pages navbar-through toolbar-fixed">
+                    <div data-page="play" class="page">
+                        <div class="page-content">
+                            <div class="content-block">
+                                <div id="drop-area">
+                                    <input id="imgInp" type="file" title="Click to add Files" name="image"  accept="image/*"/>
+                                </div>
+                                <div id="uploadProgress" class="progressbar" data-progress="0">
+                                    <span></span>
+                                </div>
+                                <img id="mainImage"/>
+                                <img id="resultImage"/>
+                            </div>
+                        </div>
+                        <div class="toolbar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="scripts/libs/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="scripts/libs/framework7.min.js"></script>
+        <script type="text/javascript" src="scripts/libs/jquery.dm-uploader.min.js"></script>
+        <script type="text/javascript" src="scripts/my-app.js"></script>
+    </body>
+</html>

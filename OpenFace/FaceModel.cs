@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace OpenFace
 {
-    class FaceModel
+    public class FaceModel
     {
         Point[] mouthPoints;
         Rectangle mouthBox;
